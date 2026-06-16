@@ -27,7 +27,9 @@ All changes to this project go through git:
 ## Hard constraints (do not violate without explicit user approval)
 
 - **No build step for the shipped app.** Plain HTML/CSS/JS using native ES modules (`<script type="module">`), loaded directly in the browser. Do not introduce a bundler for the app itself.
-- **Dependencies are CDN-only and limited to VexFlow + Tone.js.** Do not add npm runtime deps. Vitest is allowed strictly as a dev/test dependency (it must not become required to run the app).
+- **Dependencies are CDN-only and limited to VexFlow + Tone.js**, wired through the import map in `index.html` / `test.html`. Do not add npm runtime deps. Vitest is allowed strictly as a dev/test dependency (it must not become required to run the app).
+  - VexFlow uses jsdelivr `+esm` (self-contained bundle).
+  - Tone.js **must** use esm.sh `?bundle` (`https://esm.sh/tone@<ver>?bundle`), NOT jsdelivr `+esm`. jsdelivr's Tone `+esm` splits sub-deps (standardized-audio-context → automation-events) into separate requests, one of which 301-redirects without a CORS header and gets blocked. The esm.sh `?bundle` build inlines everything. Do not switch it back.
 - **Synthesized tones only** — Tone.js oscillators/synths, no bundled audio files.
 - **Treble clef only** for now, but keep `clef` in the data model so bass can be added later without code changes.
 - **Answers are authored, not computed.** Each sequence stores its own correct answer + 2 distractors. There is intentionally no music-theory engine deriving choices.
