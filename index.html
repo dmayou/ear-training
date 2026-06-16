@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Ear Training</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- CDN dependencies, resolved by ES modules via this import map (no build step). -->
+  <script type="importmap">
+  {
+    "imports": {
+      "tone": "https://cdn.jsdelivr.net/npm/tone@15.0.4/+esm",
+      "vexflow": "https://cdn.jsdelivr.net/npm/vexflow@4.2.2/+esm"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main id="app">
+    <!-- Mode-select screen -->
+    <section id="mode-select" class="screen">
+      <h1>Ear Training</h1>
+      <p class="subtitle">Choose a practice mode</p>
+      <div class="mode-buttons">
+        <button class="mode-btn" data-mode="intervals">Intervals</button>
+        <button class="mode-btn" data-mode="chords">Chords</button>
+        <button class="mode-btn" data-mode="scales">Scales</button>
+      </div>
+    </section>
+
+    <!-- Round screen (populated by game.js) -->
+    <section id="round" class="screen hidden">
+      <div id="staff" aria-label="Music staff"></div>
+      <button id="replay-btn" type="button">Play again</button>
+      <div id="choices" class="choices"></div>
+      <button id="next-btn" class="hidden" type="button">Next</button>
+      <button id="back-btn" type="button">Change mode</button>
+    </section>
+  </main>
+
+  <script type="module" src="src/game.js"></script>
+</body>
+</html>

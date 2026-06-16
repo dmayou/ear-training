@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ear Training — In-browser checks</title>
+  <link rel="stylesheet" href="styles.css" />
+
+  <script type="importmap">
+  {
+    "imports": {
+      "tone": "https://cdn.jsdelivr.net/npm/tone@15.0.4/+esm",
+      "vexflow": "https://cdn.jsdelivr.net/npm/vexflow@4.2.2/+esm"
+    }
+  }
+  </script>
+</head>
+<body>
+  <main id="app">
+    <h1>In-browser checks</h1>
+    <p class="subtitle">
+      Manual/visual checks for notation rendering, Tone.js audio, and the replay
+      loop — things that depend on SVG/Web Audio and aren't unit-testable.
+    </p>
+    <div id="results"></div>
+  </main>
+
+  <!-- TODO: load notation.js / audio.js and exercise rendering + playback here. -->
+</body>
+</html>
