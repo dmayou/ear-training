@@ -73,7 +73,11 @@ Hybrid strategy:
 - **Vitest (Node, dev-only)** for pure logic: `pitch.js` (conversions), `selector.js` (no-repeat selection, choice shuffling, correct-index tracking), and a **`sequences.js` data-validation test** — assert every entry has exactly 3 choices, a valid `correctIndex`, a known mode, parseable pitches, and that `choices[correctIndex]` is the intended answer. This data test is the highest-value guard as content grows.
 - **`test.html`** (in-browser, manual/visual) for VexFlow rendering, Tone.js audio, the replay loop (start/stop, manual button, stop-on-answer), and the controller flow — these depend on SVG/Web Audio and aren't meaningfully unit-testable.
 
-Once Vitest is set up, run all tests with `npx vitest`; run a single file with `npx vitest run tests/<name>.test.js`.
+Commands (Node + Vitest are installed; run `npm install` once after cloning):
+
+- `npm test` — run all tests once.
+- `npm run test:watch` — watch mode.
+- `npx vitest run tests/<name>.test.js` — run a single test file.
 
 ## Build order
 
