@@ -84,6 +84,25 @@ export const scales = [
   { id: "scl-natmin-a", mode: "scales", clef: "treble", render: "sequential",
     notes: ["A3", "B3", "C4", "D4", "E4", "F4", "G4", "A4"],
     choices: ["Natural minor", "Major", "Major pentatonic"], correctIndex: 0 },
+  // Diatonic modes (built on C).
+  { id: "scl-dorian-c", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["C4", "D4", "Eb4", "F4", "G4", "A4", "Bb4", "C5"],
+    choices: ["Dorian", "Natural minor", "Mixolydian"], correctIndex: 0 },
+  { id: "scl-phrygian-c", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["C4", "Db4", "Eb4", "F4", "G4", "Ab4", "Bb4", "C5"],
+    choices: ["Phrygian", "Natural minor", "Locrian"], correctIndex: 0 },
+  { id: "scl-lydian-c", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["C4", "D4", "E4", "F#4", "G4", "A4", "B4", "C5"],
+    choices: ["Lydian", "Major", "Mixolydian"], correctIndex: 0 },
+  { id: "scl-mixolydian-c", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["C4", "D4", "E4", "F4", "G4", "A4", "Bb4", "C5"],
+    choices: ["Mixolydian", "Major", "Dorian"], correctIndex: 0 },
+  { id: "scl-locrian-c", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["C4", "Db4", "Eb4", "F4", "Gb4", "Ab4", "Bb4", "C5"],
+    choices: ["Locrian", "Phrygian", "Natural minor"], correctIndex: 0 },
+  { id: "scl-minpent-a", mode: "scales", clef: "treble", render: "sequential",
+    notes: ["A3", "C4", "D4", "E4", "G4", "A4"],
+    choices: ["Minor pentatonic", "Major pentatonic", "Natural minor"], correctIndex: 0 },
 ];
 
 /** Lookup pools by mode name, for the selector and controller. */
