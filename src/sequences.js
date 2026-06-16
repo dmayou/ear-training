@@ -38,6 +38,12 @@ export const intervals = [
     notes: ["C4", "A4"], choices: ["Major 6th", "Minor 6th", "Perfect 5th"], correctIndex: 0 },
   { id: "int-min7-c", mode: "intervals", clef: "treble", render: "sequential",
     notes: ["C4", "Bb4"], choices: ["Minor 7th", "Major 7th", "Major 6th"], correctIndex: 0 },
+  { id: "int-min2-c", mode: "intervals", clef: "treble", render: "sequential",
+    notes: ["C4", "Db4"], choices: ["Minor 2nd", "Major 2nd", "Unison"], correctIndex: 0 },
+  { id: "int-maj7-c", mode: "intervals", clef: "treble", render: "sequential",
+    notes: ["C4", "B4"], choices: ["Major 7th", "Minor 7th", "Octave"], correctIndex: 0 },
+  { id: "int-min7-d", mode: "intervals", clef: "treble", render: "sequential",
+    notes: ["D4", "C5"], choices: ["Minor 7th", "Major 7th", "Major 6th"], correctIndex: 0 },
 ];
 
 export const chords = [
