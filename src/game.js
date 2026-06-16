@@ -1,8 +1,6 @@
 // Player display / controller. Owns the DOM and the state machine:
-//   mode-select -> round (render + play) -> answered (highlight + Next) -> next
+//   mode-select -> round (render + auto-loop play) -> answered (highlight + Next)
 // Also owns the audio-loop lifecycle (start on round display, stop on answer).
-//
-// TODO (milestone 7): wire the full flow using the modules below.
 
 import { renderStaff } from "./notation.js";
 import { unlock, playSequence, startAutoLoop, stopAutoLoop } from "./audio.js";
@@ -26,17 +24,82 @@ const state = {
   mode: null,
   lastId: null,
   round: null,
+  display: null, // { choices, correctIndex } in displayed order
   answered: false,
 };
 
-// Scaffold only: confirm wiring loads. Replaced by real handlers in milestone 7.
+function showScreen(name) {
+  screens.modeSelect.classList.toggle("hidden", name !== "modeSelect");
+  screens.round.classList.toggle("hidden", name !== "round");
+}
+
+function startRound() {
+  const round = pickRound(pools[state.mode], state.lastId);
+  state.round = round;
+  state.lastId = round.id;
+  state.display = shuffleChoices(round);
+  state.answered = false;
+
+  renderStaff(els.staff, round);
+  renderChoices(state.display.choices);
+  els.nextBtn.classList.add("hidden");
+
+  startAutoLoop(round);
+}
+
+function renderChoices(choices) {
+  els.choices.innerHTML = "";
+  choices.forEach((label, i) => {
+    const btn = document.createElement("button");
+    btn.className = "choice";
+    btn.type = "button";
+    btn.textContent = label;
+    btn.addEventListener("click", () => onAnswer(i, btn));
+    els.choices.appendChild(btn);
+  });
+}
+
+function onAnswer(index, clickedBtn) {
+  if (state.answered) return;
+  state.answered = true;
+  stopAutoLoop(); // selecting an answer halts the auto-replay
+
+  const correct = state.display.correctIndex;
+  const buttons = [...els.choices.querySelectorAll(".choice")];
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === correct) btn.classList.add("correct"); // always highlight the answer
+  });
+  if (index !== correct) {
+    clickedBtn.classList.add("wrong");
+  }
+
+  els.nextBtn.classList.remove("hidden");
+}
+
 function init() {
   document.querySelectorAll(".mode-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      console.log("mode selected:", btn.dataset.mode);
+    btn.addEventListener("click", async () => {
+      await unlock(); // user gesture unlocks Web Audio
+      state.mode = btn.dataset.mode;
+      state.lastId = null;
+      showScreen("round");
+      startRound();
     });
   });
-  console.log("Ear Training scaffold loaded.");
+
+  // Manual replay works any time (during the loop and after answering).
+  els.replayBtn.addEventListener("click", () => {
+    if (state.round) playSequence(state.round);
+  });
+
+  els.nextBtn.addEventListener("click", startRound);
+
+  els.backBtn.addEventListener("click", () => {
+    stopAutoLoop();
+    state.round = null;
+    showScreen("modeSelect");
+  });
 }
 
 init();
