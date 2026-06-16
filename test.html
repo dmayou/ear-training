@@ -19,6 +19,8 @@
     .check { margin-bottom: 1.5rem; }
     .check h2 { font-size: 1rem; margin: 0 0 .35rem; }
     .check .note { color: #6b6b76; font-size: .85rem; margin: 0 0 .5rem; }
+    .check button { font-size: .95rem; padding: .5rem .9rem; margin-top: .5rem; }
+    .row { display: flex; gap: .5rem; flex-wrap: wrap; }
     #log { font-family: ui-monospace, monospace; font-size: .85rem; white-space: pre-wrap; }
     .ok { color: #2f9e44; }
     .err { color: #e03131; }
@@ -28,36 +30,53 @@
   <main id="app">
     <h1>In-browser checks</h1>
     <p class="subtitle">
-      Visual checks for notation rendering (milestone 3). Each box below should
-      show a treble staff with the described notes. Audio checks come later.
+      Visual checks for notation (milestone 3) and audio (milestone 4).
+      <strong>Click any Play button</strong> — the first click unlocks Web Audio.
     </p>
 
     <div class="check">
-      <h2>Interval — Major 3rd (C4, E4), sequential</h2>
+      <h2>Interval — Major 3rd (C4, E4)</h2>
+      <p class="note">Should sound C then E, then both together (melodic → harmonic).</p>
       <div id="staff-interval"></div>
+      <button data-play="interval">▶ Play interval</button>
     </div>
 
     <div class="check">
-      <h2>Chord — C major triad (C4, E4, G4), stacked</h2>
+      <h2>Chord — C major triad (C4, E4, G4)</h2>
+      <p class="note">Should sound all three notes simultaneously.</p>
       <div id="staff-chord"></div>
+      <button data-play="chord">▶ Play chord</button>
     </div>
 
     <div class="check">
-      <h2>Scale — C major, ascending (C4–C5), sequential</h2>
+      <h2>Scale — C major, ascending (C4–C5)</h2>
+      <p class="note">Should sound eight notes ascending, one at a time.</p>
       <div id="staff-scale"></div>
+      <button data-play="scale">▶ Play scale</button>
     </div>
 
     <div class="check">
-      <h2>Accidentals — F#4, Bb4, G#4 sequential</h2>
+      <h2>Accidentals — F#4, Bb4, G#4</h2>
       <div id="staff-accidentals"></div>
+      <button data-play="accidentals">▶ Play accidentals</button>
     </div>
 
-    <h2>Render log</h2>
+    <div class="check">
+      <h2>Auto-loop demo (interval)</h2>
+      <p class="note">Start → repeats with a ~2s pause. Stop → silence halts promptly.</p>
+      <div class="row">
+        <button id="loop-start">▶ Start loop</button>
+        <button id="loop-stop">■ Stop loop</button>
+      </div>
+    </div>
+
+    <h2>Log</h2>
     <div id="log"></div>
   </main>
 
   <script type="module">
     import { renderStaff } from "./src/notation.js";
+    import { unlock, playSequence, startAutoLoop, stopAutoLoop } from "./src/audio.js";
 
     const log = document.getElementById("log");
     const write = (msg, cls) => {
@@ -67,25 +86,64 @@
       log.appendChild(line);
     };
 
-    const cases = [
-      ["staff-interval", { clef: "treble", render: "sequential", notes: ["C4", "E4"] }],
-      ["staff-chord", { clef: "treble", render: "stacked", notes: ["C4", "E4", "G4"] }],
-      ["staff-scale", {
-        clef: "treble", render: "sequential",
+    const rounds = {
+      interval: { mode: "intervals", clef: "treble", render: "sequential", notes: ["C4", "E4"] },
+      chord: { mode: "chords", clef: "treble", render: "stacked", notes: ["C4", "E4", "G4"] },
+      scale: {
+        mode: "scales", clef: "treble", render: "sequential",
         notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"],
-      }],
-      ["staff-accidentals", { clef: "treble", render: "sequential", notes: ["F#4", "Bb4", "G#4"] }],
-    ];
+      },
+      accidentals: { mode: "scales", clef: "treble", render: "sequential", notes: ["F#4", "Bb4", "G#4"] },
+    };
 
-    for (const [id, round] of cases) {
+    // Render staves (notation check).
+    const staffIds = {
+      interval: "staff-interval", chord: "staff-chord",
+      scale: "staff-scale", accidentals: "staff-accidentals",
+    };
+    for (const [key, id] of Object.entries(staffIds)) {
       try {
-        renderStaff(document.getElementById(id), round);
+        renderStaff(document.getElementById(id), rounds[key]);
         write(`ok: rendered #${id}`, "ok");
       } catch (err) {
         write(`FAIL #${id}: ${err.message}`, "err");
         console.error(id, err);
       }
     }
+
+    let unlocked = false;
+    const ensureAudio = async () => {
+      if (!unlocked) {
+        await unlock();
+        unlocked = true;
+        write("ok: audio context unlocked", "ok");
+      }
+    };
+
+    // Per-case play buttons (audio check).
+    document.querySelectorAll("[data-play]").forEach((btn) => {
+      btn.addEventListener("click", async () => {
+        try {
+          await ensureAudio();
+          const key = btn.dataset.play;
+          const secs = playSequence(rounds[key]);
+          write(`ok: playing ${key} (~${secs.toFixed(1)}s)`, "ok");
+        } catch (err) {
+          write(`FAIL play ${btn.dataset.play}: ${err.message}`, "err");
+          console.error(err);
+        }
+      });
+    });
+
+    document.getElementById("loop-start").addEventListener("click", async () => {
+      await ensureAudio();
+      startAutoLoop(rounds.interval);
+      write("ok: auto-loop started", "ok");
+    });
+    document.getElementById("loop-stop").addEventListener("click", () => {
+      stopAutoLoop();
+      write("ok: auto-loop stopped", "ok");
+    });
   </script>
 </body>
 </html>
