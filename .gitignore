@@ -1,0 +1,6 @@
+# Dev/test tooling (Vitest) — installed locally, never required to run the app.
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+*.log
