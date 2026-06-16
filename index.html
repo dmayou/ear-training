@@ -31,11 +31,14 @@
 
     <!-- Round screen (populated by game.js) -->
     <section id="round" class="screen hidden">
+      <h2 id="prompt" class="prompt"></h2>
       <div id="staff" aria-label="Music staff"></div>
-      <button id="replay-btn" type="button">Play again</button>
       <div id="choices" class="choices"></div>
-      <button id="next-btn" class="hidden" type="button">Next</button>
-      <button id="back-btn" type="button">Change mode</button>
+      <div id="actions" class="actions hidden">
+        <button id="replay-btn" type="button">Listen again</button>
+        <button id="next-btn" type="button">Next</button>
+      </div>
+      <button id="back-btn" type="button">Change practice mode</button>
     </section>
   </main>
 
