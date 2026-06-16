@@ -14,17 +14,78 @@
     }
   }
   </script>
+
+  <style>
+    .check { margin-bottom: 1.5rem; }
+    .check h2 { font-size: 1rem; margin: 0 0 .35rem; }
+    .check .note { color: #6b6b76; font-size: .85rem; margin: 0 0 .5rem; }
+    #log { font-family: ui-monospace, monospace; font-size: .85rem; white-space: pre-wrap; }
+    .ok { color: #2f9e44; }
+    .err { color: #e03131; }
+  </style>
 </head>
 <body>
   <main id="app">
     <h1>In-browser checks</h1>
     <p class="subtitle">
-      Manual/visual checks for notation rendering, Tone.js audio, and the replay
-      loop — things that depend on SVG/Web Audio and aren't unit-testable.
+      Visual checks for notation rendering (milestone 3). Each box below should
+      show a treble staff with the described notes. Audio checks come later.
     </p>
-    <div id="results"></div>
+
+    <div class="check">
+      <h2>Interval — Major 3rd (C4, E4), sequential</h2>
+      <div id="staff-interval"></div>
+    </div>
+
+    <div class="check">
+      <h2>Chord — C major triad (C4, E4, G4), stacked</h2>
+      <div id="staff-chord"></div>
+    </div>
+
+    <div class="check">
+      <h2>Scale — C major, ascending (C4–C5), sequential</h2>
+      <div id="staff-scale"></div>
+    </div>
+
+    <div class="check">
+      <h2>Accidentals — F#4, Bb4, G#4 sequential</h2>
+      <div id="staff-accidentals"></div>
+    </div>
+
+    <h2>Render log</h2>
+    <div id="log"></div>
   </main>
 
-  <!-- TODO: load notation.js / audio.js and exercise rendering + playback here. -->
+  <script type="module">
+    import { renderStaff } from "./src/notation.js";
+
+    const log = document.getElementById("log");
+    const write = (msg, cls) => {
+      const line = document.createElement("div");
+      if (cls) line.className = cls;
+      line.textContent = msg;
+      log.appendChild(line);
+    };
+
+    const cases = [
+      ["staff-interval", { clef: "treble", render: "sequential", notes: ["C4", "E4"] }],
+      ["staff-chord", { clef: "treble", render: "stacked", notes: ["C4", "E4", "G4"] }],
+      ["staff-scale", {
+        clef: "treble", render: "sequential",
+        notes: ["C4", "D4", "E4", "F4", "G4", "A4", "B4", "C5"],
+      }],
+      ["staff-accidentals", { clef: "treble", render: "sequential", notes: ["F#4", "Bb4", "G#4"] }],
+    ];
+
+    for (const [id, round] of cases) {
+      try {
+        renderStaff(document.getElementById(id), round);
+        write(`ok: rendered #${id}`, "ok");
+      } catch (err) {
+        write(`FAIL #${id}: ${err.message}`, "err");
+        console.error(id, err);
+      }
+    }
+  </script>
 </body>
 </html>
