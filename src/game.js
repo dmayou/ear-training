@@ -12,9 +12,21 @@ const screens = {
   round: document.getElementById("round"),
 };
 
+// Round prompt per practice mode.
+const PROMPTS = {
+  intervals: "Which interval do you hear?",
+  chords: "Which chord do you hear?",
+  scales: "Which scale do you hear?",
+};
+
+// Delay before auto-advancing after a correct answer.
+const AUTO_ADVANCE_MS = 1500;
+
 const els = {
+  prompt: document.getElementById("prompt"),
   staff: document.getElementById("staff"),
   choices: document.getElementById("choices"),
+  actions: document.getElementById("actions"),
   replayBtn: document.getElementById("replay-btn"),
   nextBtn: document.getElementById("next-btn"),
   backBtn: document.getElementById("back-btn"),
@@ -26,6 +38,7 @@ const state = {
   round: null,
   display: null, // { choices, correctIndex } in displayed order
   answered: false,
+  advanceTimer: null, // pending auto-advance after a correct answer
 };
 
 function showScreen(name) {
@@ -34,15 +47,19 @@ function showScreen(name) {
 }
 
 function startRound() {
+  clearTimeout(state.advanceTimer);
+  state.advanceTimer = null;
+
   const round = pickRound(pools[state.mode], state.lastId);
   state.round = round;
   state.lastId = round.id;
   state.display = shuffleChoices(round);
   state.answered = false;
 
+  els.prompt.textContent = PROMPTS[state.mode];
   renderStaff(els.staff, round);
   renderChoices(state.display.choices);
-  els.nextBtn.classList.add("hidden");
+  els.actions.classList.add("hidden"); // action row appears only after answering
 
   startAutoLoop(round);
 }
@@ -70,11 +87,16 @@ function onAnswer(index, clickedBtn) {
     btn.disabled = true;
     if (i === correct) btn.classList.add("correct"); // always highlight the answer
   });
-  if (index !== correct) {
-    clickedBtn.classList.add("wrong");
-  }
 
-  els.nextBtn.classList.remove("hidden");
+  if (index === correct) {
+    // Correct: extra "you got it" cue, no buttons, auto-advance shortly.
+    clickedBtn.classList.add("picked");
+    state.advanceTimer = setTimeout(startRound, AUTO_ADVANCE_MS);
+  } else {
+    // Incorrect: mark the wrong pick and let the player listen again / advance.
+    clickedBtn.classList.add("wrong");
+    els.actions.classList.remove("hidden");
+  }
 }
 
 function init() {
@@ -96,6 +118,8 @@ function init() {
   els.nextBtn.addEventListener("click", startRound);
 
   els.backBtn.addEventListener("click", () => {
+    clearTimeout(state.advanceTimer);
+    state.advanceTimer = null;
     stopAutoLoop();
     state.round = null;
     showScreen("modeSelect");
