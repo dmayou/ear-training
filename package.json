@@ -1,0 +1,14 @@
+{
+  "name": "ear-training-game",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mobile ear-training game (intervals, chords, scales). No-build app; tooling is dev-only.",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "vitest": "^4.1.9"
+  }
+}
