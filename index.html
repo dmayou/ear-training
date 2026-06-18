@@ -14,7 +14,16 @@
     gtag('config', 'G-KQLN43TDJJ');
   </script>
 
-  <title>Ear Training</title>
+  <title>smarter-ear</title>
+
+  <!-- Favicons / app icons (files live at the web root). -->
+  <link rel="icon" href="/favicon.ico" sizes="48x48" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <meta name="theme-color" content="#ffffff" />
+
   <link rel="stylesheet" href="styles.css" />
 
   <!-- CDN dependencies, resolved by ES modules via this import map (no build step). -->
@@ -31,7 +40,11 @@
   <main id="app">
     <!-- Mode-select screen -->
     <section id="mode-select" class="screen">
-      <h1>Ear Training</h1>
+      <div class="brand">
+        <img class="logo" src="/logo.svg" width="140" height="140"
+             alt="smarter-ear logo: an ear with a musical note and sound waves" />
+        <h1>smarter-ear</h1>
+      </div>
       <p class="subtitle">Choose a practice mode</p>
       <div class="mode-buttons">
         <button class="mode-btn" data-mode="intervals">Intervals</button>
@@ -50,6 +63,8 @@
         <button id="next-btn" type="button">Next</button>
       </div>
       <button id="back-btn" type="button">Change practice mode</button>
+      <img class="logo-footer" src="/logo.svg" width="72" height="72"
+           alt="smarter-ear" />
     </section>
   </main>
 
