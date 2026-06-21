@@ -88,7 +88,13 @@ function onAnswer(index, clickedBtn) {
     if (i === correct) btn.classList.add("correct"); // always highlight the answer
   });
 
-  if (index === correct) {
+  const isCorrect = index === correct;
+  gtag('event', 'answer', {
+    mode: state.mode,
+    round: state.round.id,
+    correct: isCorrect,
+  });
+  if (isCorrect) {
     // Correct: extra "you got it" cue, no buttons, auto-advance shortly.
     clickedBtn.classList.add("picked");
     state.advanceTimer = setTimeout(startRound, AUTO_ADVANCE_MS);
